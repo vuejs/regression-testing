@@ -1,0 +1,136 @@
+version: 2
+
+anchors:
+  container_config: &container_config
+    docker:
+      - image: circleci/node:8-browsers
+
+  workspace_root: &workspace_root
+    ~/workspace
+
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+
+  restore_yarn_cache: &restore_yarn_cache
+    restore_cache:
+      keys:
+        - yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+
+  save_yarn_cache: &save_yarn_cache
+    save_cache:
+      paths:
+        - ~/.cache/yarn
+        - node_modules
+      key: yarn-packages-{{ checksum "yarn.lock" }}
+
+jobs:
+  update:
+    <<: *container_config
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: init
+          command: |
+            git submodule sync
+            git submodule update --init
+      - run:
+          name: update submodule
+          command: |
+            git config --global user.email "${GITHUB_EMAIL}"
+            git config --global user.name "Vue Regression Bot"
+
+            git submodule update --remote vue
+            cd vue && git checkout $VUE_REVISION
+
+            # if VUE_REVISION has not changed since last update,
+            # git push will exit with code 1 and test will fail
+            git commit -am 'update vue from circleci' || test 1 = 1
+            git push || test 1 = 1
+
+  build_vue:
+    <<: *container_config
+    working_directory: ~/repo/vue
+    steps:
+      - checkout:
+          path: ~/repo
+
+      - run:
+          name: init
+          command: |
+            git submodule sync
+            git submodule update --init
+
+      - restore_cache:
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+
+      - run: yarn install --pure-lockfile
+
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+            - node_modules
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+
+      - run: yarn build
+
+      - run: |
+          mkdir -p ~/workspace
+          mv ~/repo/ ~/workspace/repo
+
+      - persist_to_workspace:
+          root: ~/workspace
+          paths:
+            - repo
+
+  element:
+    <<: *container_config
+    working_directory: ~/workspace/repo/element
+    steps:
+      - *attach_workspace
+      - *restore_yarn_cache
+      - run: yarn install --frozen-lockfile
+      - *save_yarn_cache
+      - run: ../link-vue-from-submodule.sh
+      - run: yarn test
+
+  nuxt.js:
+    <<: *container_config
+    working_directory: ~/workspace/repo/nuxt.js
+    steps:
+      - *attach_workspace
+      - *restore_yarn_cache
+      - run: yarn install --frozen-lockfile
+      - *save_yarn_cache
+      - run: ../link-vue-from-submodule.sh
+      - run: yarn test
+
+  vuetify:
+    <<: *container_config
+    working_directory: ~/workspace/repo/vuetify
+    steps:
+      - *attach_workspace
+      - *restore_yarn_cache
+      - run: yarn install --frozen-lockfile
+      - *save_yarn_cache
+      - run: ../link-vue-from-submodule.sh
+      # https://discuss.circleci.com/t/memory-problems-with-jest-and-workers/10297
+      - run: yarn test --maxWorkers 2
+
+workflows:
+  version: 2
+
+  test_all:
+    jobs:
+      - build_vue
+      - element:
+          requires:
+            - build_vue
+      - nuxt.js:
+          requires:
+            - build_vue
+      - vuetify:
+          requires:
+            - build_vue

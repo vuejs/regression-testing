@@ -1,0 +1,12 @@
+[submodule "element"]
+	path = element
+	url = https://github.com/ElemeFE/element.git
+[submodule "vuetify"]
+	path = vuetify
+	url = https://github.com/vuetifyjs/vuetify.git
+[submodule "nuxt.js"]
+	path = nuxt.js
+	url = https://github.com/nuxt/nuxt.js.git
+[submodule "vue"]
+	path = vue
+	url = https://github.com/vuejs/vue.git
