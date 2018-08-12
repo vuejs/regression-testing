@@ -116,6 +116,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - *save_yarn_cache
       - run: ../link-vue-from-submodule.sh
+      - run: yarn test:types
       # https://discuss.circleci.com/t/memory-problems-with-jest-and-workers/10297
       - run: yarn test --maxWorkers 2
 
