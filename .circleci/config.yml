@@ -43,6 +43,7 @@ jobs:
 
             git submodule update --remote vue
             cd vue && git checkout $VUE_REVISION
+            cd ../
 
             # if VUE_REVISION has not changed since last update,
             # git push will exit with code 1 and test will fail
