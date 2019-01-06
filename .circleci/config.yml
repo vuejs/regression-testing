@@ -114,12 +114,11 @@ jobs:
     steps:
       - *attach_workspace
       - *restore_yarn_cache
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --frozen-lockfile --non-interactive
       - *save_yarn_cache
       - run: ../link-vue-from-submodule.sh
-      - run: yarn test:types
-      # https://discuss.circleci.com/t/memory-problems-with-jest-and-workers/10297
-      - run: yarn test --maxWorkers 2
+      - yarn run lint
+      - npx lerna run test:coverage -- -i
 
 workflows:
   version: 2
