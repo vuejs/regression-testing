@@ -94,19 +94,23 @@ jobs:
       - *restore_yarn_cache
       - run: yarn install --frozen-lockfile
       - *save_yarn_cache
-      - run: ../link-vue-from-submodule.sh
+      - run: ../install-from-submodule.sh
       - run: yarn test
 
   nuxt.js:
     <<: *container_config
     working_directory: ~/workspace/repo/nuxt.js
+    environment:
+      NODE_ENV: test
     steps:
       - *attach_workspace
       - *restore_yarn_cache
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --frozen-lockfile --non-interactive
       - *save_yarn_cache
-      - run: ../link-vue-from-submodule.sh
-      - run: yarn test
+      - run: ../install-from-submodule.sh
+      - run: yarn test:fixtures -w=4
+      - run: yarn test:unit -w=4
+      - run: yarn test:e2e
 
   vuetify:
     <<: *container_config
@@ -116,9 +120,8 @@ jobs:
       - *restore_yarn_cache
       - run: yarn install --frozen-lockfile --non-interactive
       - *save_yarn_cache
-      - run: ../link-vue-from-submodule.sh
-      - yarn run lint
-      - npx lerna run test:coverage -- -i
+      - run: ../install-from-submodule.sh
+      - run: npx lerna run test:coverage -- -i
 
 workflows:
   version: 2
