@@ -76,6 +76,7 @@ jobs:
           key: yarn-packages-{{ checksum "yarn.lock" }}
 
       - run: yarn build
+      - run: ../pack-vue.sh
 
       - run: |
           mkdir -p ~/workspace
@@ -92,9 +93,12 @@ jobs:
     steps:
       - *attach_workspace
       - *restore_yarn_cache
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --frozen-lockfile --non-interactive
       - *save_yarn_cache
-      - run: ../install-from-submodule.sh
+      - run: yarn add -W ../vue/vue-2.5.21.tgz
+      - run: yarn add -W ../vue/packages/vue-template-compiler/vue-template-compiler-v2.5.21.tgz
+      # don't know why but for now it only works after installing twice
+      - run: yarn add -W ../vue/packages/vue-template-compiler/vue-template-compiler-v2.5.21.tgz
       - run: yarn test
 
   nuxt.js:
