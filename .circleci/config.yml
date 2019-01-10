@@ -15,7 +15,10 @@ anchors:
   restore_yarn_cache: &restore_yarn_cache
     restore_cache:
       keys:
-        - yarn-packages-{{ checksum "yarn.lock" }}-{{ checksum "../vue/dist/vue.js" }}
+        - yarn-packages-{{ checksum "yarn.lock" }}
+
+  project_yarn_install: &project_yarn_install
+    run: yarn install --frozen-lockfile --non-interactive
 
   save_yarn_cache: &save_yarn_cache
     save_cache:
@@ -23,6 +26,18 @@ anchors:
         - ~/.cache/yarn
         - node_modules
       key: yarn-packages-{{ checksum "yarn.lock" }}
+
+  install_from_submodule: &install_from_submodule
+    run: |
+      yarn add -W ../vue/vue-v*.tgz
+      yarn add -W ../vue/packages/vue-server-renderer/vue-server-renderer-v*.tgz
+      yarn add -W ../vue/packages/vue-template-compiler/vue-template-compiler-v*.tgz
+
+  run_element_test: &run_element_test
+
+  run_nuxt_test: &run_nuxt_test
+
+  run_vuetify_test: &run_vuetify_test
 
 jobs:
   update:
@@ -63,17 +78,9 @@ jobs:
             git submodule sync
             git submodule update --init
 
-      - restore_cache:
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
-
+      - *restore_yarn_cache
       - run: yarn install --pure-lockfile
-
-      - save_cache:
-          paths:
-            - ~/.cache/yarn
-            - node_modules
-          key: yarn-packages-{{ checksum "yarn.lock" }}
+      - *save_yarn_cache
 
       - run: yarn build
       - run: ../pack-vue.sh
@@ -93,12 +100,11 @@ jobs:
     steps:
       - *attach_workspace
       - *restore_yarn_cache
-      - run: yarn install --frozen-lockfile --non-interactive
+      - *project_yarn_install
       - *save_yarn_cache
-      - run: yarn add -W ../vue/vue-v2.5.21.tgz
-      - run: yarn add -W ../vue/packages/vue-template-compiler/vue-template-compiler-v2.5.21.tgz
+      - *install_from_submodule
       # don't know why but for now it only works after installing twice
-      - run: yarn add -W ../vue/packages/vue-template-compiler/vue-template-compiler-v2.5.21.tgz
+      - *install_from_submodule
       - run: yarn test
 
   nuxt.js:
@@ -109,9 +115,9 @@ jobs:
     steps:
       - *attach_workspace
       - *restore_yarn_cache
-      - run: yarn install --frozen-lockfile --non-interactive
+      - *project_yarn_install
       - *save_yarn_cache
-      - run: ../install-from-submodule.sh
+      - *install_from_submodule
       - run: yarn test:fixtures -w=4
       - run: yarn test:unit -w=4
       - run: yarn test:e2e
@@ -122,9 +128,9 @@ jobs:
     steps:
       - *attach_workspace
       - *restore_yarn_cache
-      - run: yarn install --frozen-lockfile --non-interactive
+      - *project_yarn_install
       - *save_yarn_cache
-      - run: ../install-from-submodule.sh
+      - *install_from_submodule
       - run: npx lerna run test:coverage -- -i
 
 workflows:
