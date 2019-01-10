@@ -39,7 +39,7 @@ Third-party libraies should be updated manually.
 The basic idea is to update libraries to their latest **stable** releases.
 Release tags are listed on their corresponding GitHub Releases pages.
 
-```
+```bash
 git submodule update --remote <directory-name>
 cd <directory-name>
 git checkout <latest-stabe-version>
@@ -47,4 +47,12 @@ cd ..
 git add <directory-name>
 git commit -m 'chore: update library version'
 git push
+```
+
+## To Run Tests Locally
+
+To run the regression tests locally against a specific commit in the [vue](https://github.com/vuejs/vue) repository
+
+```bash
+./local-test.sh [COMMIT_HASH_OR_BRANCH_NAME]
 ```
