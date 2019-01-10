@@ -42,6 +42,13 @@ installLocalVue
 yarn test
 cleanup
 
+cd ../vuex
+echo -e "\n\nTesting vuex…\n\n"
+installDeps
+installLocalVue
+yarn test
+cleanup
+
 cd ../element
 echo -e "\n\nTesting element…\n\n"
 read version _ <<< $(node --version)

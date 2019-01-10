@@ -94,6 +94,28 @@ jobs:
           paths:
             - repo
 
+  vue-router:
+    <<: *container_config
+    working_directory: ~/workspace/repo/vue-router
+    steps:
+      - *attach_workspace
+      - *restore_yarn_cache
+      - *project_yarn_install
+      - *save_yarn_cache
+      - *install_from_submodule
+      - run: yarn test
+
+  vuex:
+    <<: *container_config
+    working_directory: ~/workspace/repo/vuex
+    steps:
+      - *attach_workspace
+      - *restore_yarn_cache
+      - *project_yarn_install
+      - *save_yarn_cache
+      - *install_from_submodule
+      - run: yarn test
+
   element:
     <<: *container_config
     working_directory: ~/workspace/repo/element
@@ -139,6 +161,12 @@ workflows:
   test_all:
     jobs:
       - build_vue
+      - vue-router:
+          requires:
+            - build_vue
+      - vuex:
+          requires:
+            - build_vue
       - element:
           requires:
             - build_vue
