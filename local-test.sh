@@ -35,6 +35,13 @@ cleanup() {
   rm -rf node_modules
 }
 
+cd ../vue-router
+echo -e "\n\nTesting vue-router…\n\n"
+installDeps
+installLocalVue
+yarn test
+cleanup
+
 cd ../element
 echo -e "\n\nTesting element…\n\n"
 read version _ <<< $(node --version)

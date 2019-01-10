@@ -10,3 +10,6 @@
 [submodule "vue"]
 	path = vue
 	url = https://github.com/vuejs/vue.git
+[submodule "vue-router"]
+	path = vue-router
+	url = https://github.com/vuejs/vue-router.git
