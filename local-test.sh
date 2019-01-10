@@ -28,6 +28,11 @@ installLocalVue() {
   yarn add -W ../vue/vue-v*.tgz \
     ../vue/packages/vue-server-renderer/vue-server-renderer-v*.tgz \
     ../vue/packages/vue-template-compiler/vue-template-compiler-v*.tgz
+
+  # need to run twice to force install in many cases, don't know why yet
+  yarn add -W ../vue/vue-v*.tgz \
+    ../vue/packages/vue-server-renderer/vue-server-renderer-v*.tgz \
+    ../vue/packages/vue-template-compiler/vue-template-compiler-v*.tgz
 }
 
 cleanup() {
@@ -57,8 +62,6 @@ if [[ $version != *"v8."* ]]; then
   exit
 fi
 installDeps
-installLocalVue
-# must install twice
 installLocalVue
 yarn test
 cleanup

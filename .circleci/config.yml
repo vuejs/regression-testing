@@ -29,9 +29,13 @@ anchors:
 
   install_from_submodule: &install_from_submodule
     run: |
-      yarn add -W ../vue/vue-v*.tgz
-      yarn add -W ../vue/packages/vue-server-renderer/vue-server-renderer-v*.tgz
-      yarn add -W ../vue/packages/vue-template-compiler/vue-template-compiler-v*.tgz
+      yarn add -W ../vue/vue-v*.tgz \
+        ../vue/packages/vue-server-renderer/vue-server-renderer-v*.tgz \
+        ../vue/packages/vue-template-compiler/vue-template-compiler-v*.tgz
+      # need to run twice to force install in many cases, don't know why yet
+      yarn add -W ../vue/vue-v*.tgz \
+        ../vue/packages/vue-server-renderer/vue-server-renderer-v*.tgz \
+        ../vue/packages/vue-template-compiler/vue-template-compiler-v*.tgz
 
   run_element_test: &run_element_test
 
@@ -124,8 +128,6 @@ jobs:
       - *restore_yarn_cache
       - *yarn_install
       - *save_yarn_cache
-      - *install_from_submodule
-      # don't know why but for now it only works after installing twice
       - *install_from_submodule
       - run: yarn test
 
