@@ -71,9 +71,10 @@ echo -e "\n\nTesting nuxt.js…\n\n"
 installDeps
 installLocalVue
 rm ../test-nuxt.js.log
-NODE_ENV=test yarn test:fixtures -w=4
-NODE_ENV=test yarn test:unit -w=4
+NODE_ENV=test yarn test:fixtures -i
+NODE_ENV=test yarn test:unit -w=2
 NODE_ENV=test yarn test:e2e
+NODE_ENV=test yarn test:types
 cleanup
 
 cd ../vuetify

@@ -142,9 +142,10 @@ jobs:
       - *yarn_install
       - *save_yarn_cache
       - *install_from_submodule
-      - run: yarn test:fixtures -w=4
-      - run: yarn test:unit -w=4
+      - run: yarn test:fixtures -i
+      - run: yarn test:unit -w=2
       - run: yarn test:e2e
+      - run: yarn test:types
 
   vuetify:
     <<: *container_config
