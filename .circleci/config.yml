@@ -136,6 +136,7 @@ jobs:
     working_directory: ~/workspace/repo/nuxt.js
     environment:
       NODE_ENV: test
+      NODE_OPTIONS: --max_old_space_size=4096
     steps:
       - *attach_workspace
       - *restore_yarn_cache
