@@ -129,7 +129,7 @@ jobs:
       - *yarn_install
       - *save_yarn_cache
       - *install_from_submodule
-      - run: sed -i '' -e 's/timeout: 4000/timeout: 40000/g' test/unit/karma.conf.js
+      - run: sed -i '' -e 's/timeout:\ 4000/timeout:\ 40000/g' test/unit/karma.conf.js
       - run: yarn test
 
   nuxt.js:
