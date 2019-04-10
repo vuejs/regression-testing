@@ -145,7 +145,14 @@ jobs:
       - *install_from_submodule
       - run: yarn test:fixtures -i
       - run: yarn test:unit -w=2
-      - run: yarn test:e2e
+      - run:
+          name: Download Chromium
+          command: |
+            cd /opt
+            sudo wget https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/641430/chrome-linux.zip
+            sudo unzip chrome-linux.zip
+            sudo ln -s `pwd`/chrome-linux/chrome /bin/chromium
+      - run: CHROME_PATH=/bin/chromium yarn test:e2e
       - run: yarn test:types
 
   vuetify:
