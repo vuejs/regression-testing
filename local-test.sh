@@ -57,8 +57,8 @@ cleanup
 cd ../element
 echo -e "\n\nTesting element…\n\n"
 read version _ <<< $(node --version)
-if [[ $version != *"v8."* ]]; then
-  echo "Element requires Node.js v8, please switch your default Node.js version"
+if [[ $version != *"v10."* ]]; then
+  echo "Element requires Node.js v10, please switch your default Node.js version"
   exit
 fi
 installDeps
