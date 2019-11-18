@@ -154,7 +154,6 @@ jobs:
             sudo unzip chrome-linux.zip
             sudo ln -s `pwd`/chrome-linux/chrome /bin/chromium
       - run: CHROME_PATH=/bin/chromium yarn test:e2e
-      - run: yarn test:types
 
   vuetify:
     <<: *container_config
