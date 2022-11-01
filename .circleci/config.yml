@@ -184,6 +184,6 @@ workflows:
       - nuxt.js:
           requires:
             - build_vue
-      - vuetify:
-          requires:
-            - build_vue
+      # - vuetify:
+      #     requires:
+      #       - build_vue
